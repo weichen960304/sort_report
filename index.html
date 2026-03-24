@@ -48,6 +48,13 @@
 			line-height: 1.6;
 		}
 
+		.links {
+			display: flex;
+			justify-content: center;
+			gap: 12px;
+			flex-wrap: wrap;
+		}
+
 		.link-btn {
 			display: inline-block;
 			text-decoration: none;
@@ -68,8 +75,11 @@
 <body>
 	<main class="card">
 		<h1>程式練習入口</h1>
-		<p>點擊下方按鈕，即可前往 Bubble Sort 示範頁面。</p>
-		<a class="link-btn" href="bubble_sort.html">前往 Bubble Sort</a>
+		<p>點擊下方按鈕，前往不同排序法介紹與示範頁面。</p>
+		<div class="links">
+			<a class="link-btn" href="bubble_sort.htmll">前往 Bubble Sort</a>
+			<a class="link-btn" href="selection_sort.html">前往 Selection Sort</a>
+		</div>
 	</main>
 </body>
 </html>

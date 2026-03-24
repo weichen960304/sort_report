@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選擇排序法 - 教學介紹</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: #5568d3;
+            text-decoration: underline;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2.3em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 28px;
+            font-size: 1.1em;
+        }
+
+        .teaching-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .teaching-section h2 {
+            color: #333;
+            margin-top: 24px;
+            margin-bottom: 14px;
+            font-size: 1.5em;
+        }
+
+        .teaching-section h2:first-child {
+            margin-top: 0;
+        }
+
+        .teaching-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .teaching-section ol,
+        .teaching-section ul {
+            color: #555;
+            margin-left: 25px;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .teaching-section li {
+            margin-bottom: 8px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0 10px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .summary-title {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+
+        .summary-value {
+            font-size: 1.15em;
+            font-weight: 700;
+        }
+
+        .teaching-content-code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .teaching-content-code pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .teaching-section {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back-link" href="index.html">← 回到首頁</a>
+        <h1>🎯 選擇排序法教學</h1>
+        <p class="subtitle">Selection Sort Introduction</p>
+
+        <div class="teaching-section">
+            <h2>📚 操作原理</h2>
+            <p>選擇排序法是一種直觀且容易理解的排序演算法。每一輪會從「尚未排序」的區間中找出最小值，然後與目前輪次的起始位置交換，逐步把最小元素放到正確位置。</p>
+            <p>主要步驟如下：</p>
+            <ol>
+                <li>從第 1 個位置開始，假設該位置是目前最小值。</li>
+                <li>往右掃描剩下元素，若找到更小值就更新最小值索引。</li>
+                <li>掃描結束後，將最小值與目前位置交換。</li>
+                <li>把起始位置往右移一格，重複步驟 1-3，直到排序完成。</li>
+            </ol>
+
+            <h2>⏱️ 時間與空間複雜度</h2>
+            <p>選擇排序法的時間與空間複雜度如下：</p>
+            <ul>
+                <li><strong>時間複雜度：</strong>
+                    <ul>
+                        <li>最壞情況 (Worst Case)：O(n^2)</li>
+                        <li>平均情況 (Average Case)：O(n^2)</li>
+                        <li>最佳情況 (Best Case)：O(n^2)</li>
+                    </ul>
+                </li>
+                <li><strong>空間複雜度：</strong>O(1)（原地排序，不需要額外陣列）</li>
+            </ul>
+
+            <div class="summary-grid">
+                <div class="summary-box">
+                    <div class="summary-title">比較次數</div>
+                    <div class="summary-value">通常較多</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-title">交換次數</div>
+                    <div class="summary-value">通常較少</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-title">穩定性</div>
+                    <div class="summary-value">不穩定排序</div>
+                </div>
+            </div>
+
+            <h2>📋 完整程式碼</h2>
+            <p>以下是使用 JavaScript 實現選擇排序法的完整程式碼：</p>
+            <div class="teaching-content-code">
+                <pre>
+function selectionSort(arr) {
+    const n = arr.length;
+
+    for (let i = 0; i < n - 1; i++) {
+        let minIndex = i;
+
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+
+        if (minIndex !== i) {
+            const temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
+        }
+    }
+
+    return arr;
+}
+
+// 測試選擇排序法
+let array = [64, 34, 25, 12, 22, 11, 90];
+console.log("排序前的陣列:", array);
+let sortedArray = selectionSort(array);
+console.log("排序後的陣列:", sortedArray);
+                </pre>
+            </div>
+
+            <h2>✅ 範例輸出</h2>
+            <p>執行程式碼後，您應該會看到以下輸出：</p>
+            <div class="teaching-content-code">
+                <pre>
+排序前的陣列: [64, 34, 25, 12, 22, 11, 90]
+排序後的陣列: [11, 12, 22, 25, 34, 64, 90]
+                </pre>
+            </div>
+
+            <h2>💡 適用情境</h2>
+            <ul>
+                <li>適合用來教學，幫助理解「每輪選出最小值」的概念。</li>
+                <li>當交換成本高、比較成本低時，選擇排序通常比氣泡排序更有優勢。</li>
+                <li>不建議用於大型資料排序，因為時間複雜度固定為 O(n^2)。</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
