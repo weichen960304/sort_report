@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>氣泡排序法 - 互動模擬器</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -391,11 +393,135 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        :root {
+            --bg-a: #fff7ef;
+            --bg-b: #e8fbf7;
+            --bg-c: #dfefff;
+            --ink: #17324d;
+            --card: rgba(255, 255, 255, 0.86);
+            --line: rgba(255, 255, 255, 0.75);
+            --brand: #007a78;
+            --brand-2: #00a6a1;
+            --soft: #f3fafc;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(255, 170, 40, 0.24) 0, transparent 36%),
+                radial-gradient(circle at 84% 82%, rgba(0, 166, 153, 0.22) 0, transparent 42%),
+                linear-gradient(120deg, var(--bg-a), var(--bg-b), var(--bg-c));
+            color: var(--ink);
+        }
+
+        .container {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 20px 45px rgba(15, 57, 80, 0.18);
+        }
+
+        .back-link {
+            color: var(--brand);
+        }
+
+        .back-link:hover {
+            color: #005f5d;
+        }
+
+        h1 {
+            color: #123452;
+            letter-spacing: 0.01em;
+        }
+
+        .subtitle {
+            color: #3d5f7e;
+        }
+
+        .control-panel,
+        .visualization,
+        .teaching-section {
+            background: var(--soft);
+            border: 1px solid rgba(4, 60, 82, 0.08);
+            border-left-color: transparent;
+            border-radius: 14px;
+        }
+
+        .control-panel,
+        .teaching-section,
+        .code-section {
+            border-left: 6px solid var(--brand-2);
+        }
+
+        input[type="text"] {
+            border-color: #c9dbe7;
+            background: #ffffff;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--brand-2);
+            box-shadow: 0 0 0 3px rgba(0, 166, 161, 0.12);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #008f8d 0%, #006e6c 100%);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #007876 0%, #005f5d 100%);
+            box-shadow: 0 8px 18px rgba(0, 122, 120, 0.32);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #f4b23b 0%, #f08a24 100%);
+            color: #1d283a;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #ef9a28 0%, #de7815 100%);
+        }
+
+        .btn-warning {
+            background: #f4ead6;
+            color: #5f4b1e;
+        }
+
+        .btn-danger {
+            background: #ca4a3a;
+        }
+
+        .speed-label {
+            color: var(--brand);
+        }
+
+        .bar {
+            background: linear-gradient(180deg, #2ca9a4 0%, #0c7f7d 100%);
+        }
+
+        .bar.comparing {
+            background: linear-gradient(180deg, #ff8a54 0%, #ef5b2f 100%);
+        }
+
+        .bar.sorted {
+            background: linear-gradient(180deg, #2a79d3 0%, #195fb1 100%);
+        }
+
+        .info-box {
+            background: linear-gradient(140deg, #0f8f8b 0%, #2c6cb7 100%);
+            box-shadow: 0 10px 22px rgba(12, 82, 115, 0.2);
+        }
+
+        .code-section {
+            background: #0f1c2b;
+            border-radius: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a class="back-link" href="../">← 回到首頁</a>
+        <a class="back-link" href="index.html">← 回到首頁</a>
         <h1>🎯 氣泡排序法模擬器</h1>
         <p class="subtitle">Bubble Sort Visualizer</p>
 

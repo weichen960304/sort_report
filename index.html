@@ -5,13 +5,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>排序練習首頁</title>
 	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap");
+
 		:root {
-			--bg-start: #f6fbff;
-			--bg-end: #e8f3ff;
-			--text: #1f2d3d;
-			--accent: #0b6ef3;
-			--accent-hover: #095ac4;
-			--card: #ffffff;
+			--bg-start: #fff8ef;
+			--bg-mid: #e8fbf8;
+			--bg-end: #dcefff;
+			--text: #1b2a3f;
+			--accent: #007a78;
+			--accent-hover: #005f5d;
+			--card: rgba(255, 255, 255, 0.82);
 		}
 
 		* {
@@ -23,29 +26,36 @@
 			min-height: 100vh;
 			display: grid;
 			place-items: center;
-			background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+			background:
+				radial-gradient(circle at 10% 15%, rgba(255, 167, 38, 0.2) 0, transparent 35%),
+				radial-gradient(circle at 85% 80%, rgba(0, 166, 153, 0.22) 0, transparent 40%),
+				linear-gradient(130deg, var(--bg-start), var(--bg-mid), var(--bg-end));
 			color: var(--text);
-			font-family: "Segoe UI", "Noto Sans TC", sans-serif;
+			font-family: "Outfit", "Noto Sans TC", sans-serif;
 			padding: 24px;
 		}
 
 		.card {
 			width: min(520px, 100%);
 			background: var(--card);
-			border-radius: 16px;
-			padding: 28px;
-			box-shadow: 0 12px 30px rgba(11, 110, 243, 0.12);
+			border: 1px solid rgba(255, 255, 255, 0.65);
+			backdrop-filter: blur(8px);
+			border-radius: 22px;
+			padding: 34px;
+			box-shadow: 0 18px 45px rgba(16, 58, 80, 0.16);
 			text-align: center;
 		}
 
 		h1 {
 			margin: 0 0 12px;
-			font-size: clamp(1.5rem, 3vw, 2rem);
+			font-size: clamp(1.8rem, 4vw, 2.35rem);
+			letter-spacing: 0.01em;
 		}
 
 		p {
 			margin: 0 0 20px;
 			line-height: 1.6;
+			color: #324b67;
 		}
 
 		.links {
@@ -59,16 +69,28 @@
 			display: inline-block;
 			text-decoration: none;
 			color: #fff;
-			background: var(--accent);
+			background: linear-gradient(135deg, #008f8d 0%, #006e6c 100%);
 			padding: 12px 20px;
-			border-radius: 10px;
+			border-radius: 12px;
 			font-weight: 700;
-			transition: background-color 0.2s ease, transform 0.2s ease;
+			box-shadow: 0 9px 18px rgba(0, 122, 120, 0.26);
+			transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 		}
 
 		.link-btn:hover {
-			background: var(--accent-hover);
-			transform: translateY(-1px);
+			transform: translateY(-2px);
+			box-shadow: 0 13px 25px rgba(0, 122, 120, 0.3);
+			filter: brightness(1.04);
+		}
+
+		@media (max-width: 640px) {
+			.card {
+				padding: 26px 20px;
+			}
+
+			.link-btn {
+				width: 100%;
+			}
 		}
 	</style>
 </head>
