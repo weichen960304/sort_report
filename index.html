@@ -8,17 +8,16 @@
 		@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap");
 
 		:root {
-			--bg-1: #0b1026;
-			--bg-2: #1d2d72;
-			--bg-3: #2c7fb8;
-			--panel: rgba(255, 255, 255, 0.12);
-			--panel-border: rgba(255, 255, 255, 0.28);
+			--bg-1: #060b1f;
+			--bg-2: #10275f;
+			--bg-3: #1f86a8;
+			--panel: rgba(255, 255, 255, 0.1);
+			--panel-border: rgba(210, 235, 255, 0.35);
 			--text-main: #f4f8ff;
-			--text-muted: #d9e4ff;
+			--text-muted: #d5e5ff;
 			--chip: rgba(255, 255, 255, 0.16);
-			--card-1: #63b3ff;
-			--card-2: #8f7dff;
-			--card-3: #4cd6ad;
+			--line-soft: rgba(182, 213, 242, 0.25);
+			--card-shadow: rgba(4, 20, 48, 0.35);
 		}
 
 		* {
@@ -31,9 +30,9 @@
 			font-family: "Noto Sans TC", sans-serif;
 			color: var(--text-main);
 			background:
-				radial-gradient(circle at 12% 18%, rgba(89, 181, 255, 0.35) 0, transparent 28%),
-				radial-gradient(circle at 88% 82%, rgba(163, 119, 255, 0.35) 0, transparent 32%),
-				linear-gradient(140deg, var(--bg-1), var(--bg-2) 50%, var(--bg-3));
+				radial-gradient(circle at 12% 18%, rgba(99, 179, 255, 0.3) 0, transparent 30%),
+				radial-gradient(circle at 88% 82%, rgba(68, 224, 195, 0.26) 0, transparent 35%),
+				linear-gradient(140deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
 			padding: 20px;
 			overflow-x: hidden;
 		}
@@ -68,19 +67,61 @@
 			z-index: 1;
 			width: min(980px, 100%);
 			margin: 0 auto;
-			padding: 28px;
+			padding: 30px;
 			border-radius: 28px;
 			border: 1px solid var(--panel-border);
 			background: var(--panel);
 			backdrop-filter: blur(10px);
-			box-shadow: 0 30px 80px rgba(6, 10, 28, 0.38);
+			box-shadow: 0 34px 80px rgba(6, 10, 28, 0.38);
 			animation: fade-up 0.8s ease both;
+			overflow: hidden;
+		}
+
+		.wrapper::before {
+			content: "";
+			position: absolute;
+			width: 420px;
+			height: 420px;
+			top: -180px;
+			right: -160px;
+			border-radius: 50%;
+			background: radial-gradient(circle at 30% 30%, rgba(118, 210, 255, 0.35), rgba(118, 210, 255, 0));
+			pointer-events: none;
 		}
 
 		.hero {
 			display: grid;
+			grid-template-columns: 1.4fr 1fr;
+			gap: 20px;
+			align-items: end;
+			margin-bottom: 26px;
+		}
+
+		.hero-main {
+			display: grid;
 			gap: 14px;
-			margin-bottom: 24px;
+		}
+
+		.hero-side {
+			display: grid;
+			gap: 10px;
+			justify-items: end;
+		}
+
+		.mini-stat {
+			width: min(280px, 100%);
+			padding: 10px 12px;
+			border-radius: 12px;
+			background: rgba(245, 251, 255, 0.12);
+			border: 1px solid var(--line-soft);
+			font-size: 0.88rem;
+			color: #eff6ff;
+		}
+
+		.mini-stat strong {
+			display: block;
+			font-size: 1.05rem;
+			font-family: "Chakra Petch", "Noto Sans TC", sans-serif;
 		}
 
 		.badge {
@@ -100,9 +141,10 @@
 		h1 {
 			margin: 0;
 			font-family: "Chakra Petch", "Noto Sans TC", sans-serif;
-			font-size: clamp(2rem, 4.7vw, 3.3rem);
+			font-size: clamp(2rem, 4.8vw, 3.45rem);
 			line-height: 1.08;
 			letter-spacing: 0.01em;
+			text-wrap: balance;
 		}
 
 		.subtitle {
@@ -115,7 +157,7 @@
 		.grid {
 			display: grid;
 			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 14px;
+			gap: 15px;
 		}
 
 		.sort-card {
@@ -123,18 +165,61 @@
 			gap: 12px;
 			text-decoration: none;
 			color: #0f1630;
-			border-radius: 18px;
-			padding: 18px;
-			background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(247, 250, 255, 0.84));
+			border-radius: 20px;
+			padding: 18px 18px 16px;
+			background: linear-gradient(165deg, rgba(255, 255, 255, 0.92), rgba(238, 247, 255, 0.88));
 			border: 1px solid rgba(255, 255, 255, 0.7);
-			box-shadow: 0 12px 28px rgba(8, 20, 60, 0.22);
-			transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+			box-shadow: 0 12px 28px var(--card-shadow);
+			transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+			position: relative;
+			overflow: hidden;
+			animation: card-rise 0.7s ease both;
+		}
+
+		.sort-card::after {
+			content: "";
+			position: absolute;
+			left: -35%;
+			top: -48%;
+			width: 78%;
+			height: 180%;
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+			transform: rotate(14deg);
+			pointer-events: none;
 		}
 
 		.sort-card:hover {
 			transform: translateY(-6px);
-			box-shadow: 0 18px 34px rgba(8, 20, 60, 0.34);
+			box-shadow: 0 22px 36px rgba(8, 20, 60, 0.4);
 			border-color: rgba(255, 255, 255, 0.95);
+			background: linear-gradient(165deg, rgba(255, 255, 255, 0.95), rgba(226, 244, 255, 0.9));
+		}
+
+		.sort-card:nth-child(2) {
+			animation-delay: 0.08s;
+		}
+
+		.sort-card:nth-child(3) {
+			animation-delay: 0.16s;
+		}
+
+		.card-top {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.card-arrow {
+			width: 30px;
+			height: 30px;
+			display: inline-grid;
+			place-items: center;
+			border-radius: 999px;
+			font-size: 0.95rem;
+			color: #1d3e69;
+			background: rgba(255, 255, 255, 0.8);
+			border: 1px solid rgba(29, 62, 105, 0.14);
 		}
 
 		.sort-card h2 {
@@ -158,7 +243,7 @@
 			font-size: 0.78rem;
 			font-weight: 700;
 			color: #10203c;
-			background: rgba(255, 255, 255, 0.85);
+			background: rgba(255, 255, 255, 0.78);
 		}
 
 		.sort-card:nth-child(1) .tag {
@@ -174,9 +259,22 @@
 		}
 
 		.footer-note {
-			margin-top: 16px;
+			margin-top: 18px;
+			padding-top: 14px;
+			border-top: 1px dashed rgba(213, 234, 255, 0.32);
 			font-size: 0.88rem;
 			color: rgba(235, 244, 255, 0.88);
+		}
+
+		@keyframes card-rise {
+			from {
+				opacity: 0;
+				transform: translateY(15px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
 		}
 
 		@keyframes fade-up {
@@ -195,6 +293,14 @@
 				padding: 20px;
 			}
 
+			.hero {
+				grid-template-columns: 1fr;
+			}
+
+			.hero-side {
+				justify-items: start;
+			}
+
 			.grid {
 				grid-template-columns: 1fr;
 			}
@@ -204,24 +310,45 @@
 <body>
 	<main class="wrapper">
 		<section class="hero">
-			<span class="badge">SORTING LAB</span>
-			<h1>排序練習入口</h1>
-			<p class="subtitle">挑一種排序法開始探索，透過互動動畫觀察每一步交換與比較，快速建立演算法的直覺。</p>
+			<div class="hero-main">
+				<span class="badge">SORTING LAB</span>
+				<h1>排序練習入口</h1>
+				<p class="subtitle">挑一種排序法開始探索，透過互動動畫觀察每一步交換與比較，快速建立演算法的直覺。</p>
+			</div>
+			<div class="hero-side" aria-label="學習提示">
+				<div class="mini-stat">
+					<strong>3 種經典排序法</strong>
+					由淺入深，快速比較差異。
+				</div>
+				<div class="mini-stat">
+					<strong>即時步驟追蹤</strong>
+					每一次比較與交換都看得見。
+				</div>
+			</div>
 		</section>
 
 		<section class="grid" aria-label="排序法入口">
 			<a class="sort-card" href="bubble_sort.html">
-				<span class="tag">交換為核心</span>
+				<div class="card-top">
+					<span class="tag">交換為核心</span>
+					<span class="card-arrow" aria-hidden="true">↗</span>
+				</div>
 				<h2>Bubble Sort</h2>
 				<p>反覆比較相鄰元素，像氣泡一樣把最大值推到尾端，流程直觀且好理解。</p>
 			</a>
 			<a class="sort-card" href="selection_sort.html">
-				<span class="tag">每輪選最小</span>
+				<div class="card-top">
+					<span class="tag">每輪選最小</span>
+					<span class="card-arrow" aria-hidden="true">↗</span>
+				</div>
 				<h2>Selection Sort</h2>
 				<p>每一輪從未排序區找最小值放到前面，步驟固定，方便觀察比較次數。</p>
 			</a>
 			<a class="sort-card" href="insertion_sort.html">
-				<span class="tag">局部有序插入</span>
+				<div class="card-top">
+					<span class="tag">局部有序插入</span>
+					<span class="card-arrow" aria-hidden="true">↗</span>
+				</div>
 				<h2>Insertion Sort</h2>
 				<p>逐步把元素插入已排序區，對近乎排序好的資料特別有效率。</p>
 			</a>
