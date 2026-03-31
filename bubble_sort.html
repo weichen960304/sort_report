@@ -566,6 +566,106 @@
             background: #0f1c2b;
             border-radius: 14px;
         }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            right: -130px;
+            top: -140px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(54, 173, 206, 0.25), rgba(54, 173, 206, 0));
+            pointer-events: none;
+        }
+
+        .back-link,
+        h1,
+        .subtitle,
+        .simulator-title,
+        .control-panel,
+        #statusMessage,
+        .process-section,
+        .info-panel,
+        .visualization,
+        .code-section,
+        .teaching-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            margin-bottom: 4px;
+            font-size: clamp(2rem, 4vw, 2.6rem);
+        }
+
+        .subtitle {
+            margin-bottom: 0;
+        }
+
+        .simulator-title {
+            order: 4;
+            margin: 6px 0 -2px;
+            font-size: 1.25rem;
+            color: #174062;
+            letter-spacing: 0.02em;
+            border-left: 6px solid var(--brand-2);
+            padding-left: 10px;
+        }
+
+        .teaching-section {
+            order: 2;
+            margin-top: 0;
+        }
+
+        .code-section {
+            order: 3;
+            margin-top: 0;
+        }
+
+        .control-panel {
+            order: 5;
+            margin-bottom: 0;
+            box-shadow: 0 10px 24px rgba(11, 77, 104, 0.08);
+        }
+
+        #statusMessage {
+            order: 6;
+            margin-bottom: 0;
+        }
+
+        .process-section {
+            order: 7;
+            margin-bottom: 0;
+            box-shadow: 0 8px 18px rgba(15, 63, 89, 0.08);
+        }
+
+        .info-panel {
+            order: 8;
+            margin-bottom: 0;
+        }
+
+        .visualization {
+            order: 9;
+            margin-bottom: 4px;
+            box-shadow: inset 0 0 0 1px rgba(13, 93, 104, 0.05);
+        }
+
+        .process-log {
+            max-height: 260px;
+        }
+
+        .info-box {
+            border-radius: 14px;
+        }
     </style>
 </head>
 <body>
@@ -573,6 +673,7 @@
         <a class="back-link" href="index.html">← 回到首頁</a>
         <h1>🎯 氣泡排序法模擬器</h1>
         <p class="subtitle">Bubble Sort Visualizer</p>
+        <h2 class="simulator-title">互動模擬器</h2>
 
         <!-- 控制面板 -->
         <div class="control-panel">
