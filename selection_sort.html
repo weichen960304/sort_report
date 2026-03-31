@@ -309,6 +309,55 @@
             border: 1px solid #ffecb5;
         }
 
+        .process-section {
+            background: #ffffff;
+            border: 1px solid rgba(4, 60, 82, 0.12);
+            border-left: 6px solid #00a6a1;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        .process-section h3 {
+            margin: 0 0 12px;
+            color: #123452;
+            font-size: 1.1em;
+        }
+
+        .process-log {
+            max-height: 210px;
+            overflow-y: auto;
+            display: grid;
+            gap: 8px;
+            padding-right: 4px;
+        }
+
+        .process-item {
+            background: #f3fafc;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.92em;
+            line-height: 1.45;
+            color: #2b4762;
+            border-left: 4px solid #9bc4dd;
+        }
+
+        .process-item.compare {
+            border-left-color: #ef7d55;
+        }
+
+        .process-item.swap {
+            border-left-color: #2a79d3;
+        }
+
+        .process-item.pass {
+            border-left-color: #0f8f8b;
+        }
+
+        .process-item.done {
+            border-left-color: #2e9d52;
+        }
+
         .teaching-section {
             background: white;
             padding: 30px;
@@ -550,6 +599,11 @@
 
         <div id="statusMessage"></div>
 
+        <div class="process-section">
+            <h3>排序過程</h3>
+            <div class="process-log" id="processLog"></div>
+        </div>
+
         <div class="info-panel">
             <div class="info-box">
                 <div class="info-label">比較次數</div>
@@ -644,6 +698,7 @@ function selectionSort(arr) {
         let swapCount = 0;
         let sortedIndices = [];
         let currentMinIndex = -1;
+        let processStep = 0;
 
         document.getElementById('speedSlider').addEventListener('input', function() {
             const labels = ['超快', '極快', '很快', '快速', '較快', '中速', '較慢', '慢速', '很慢', '極慢'];
@@ -655,12 +710,30 @@ function selectionSort(arr) {
             swapCount = 0;
             sortedIndices = [];
             currentMinIndex = -1;
+            processStep = 0;
             document.getElementById('compareCount').textContent = '0';
             document.getElementById('swapCount').textContent = '0';
             document.getElementById('sortedCount').textContent = '0';
             document.getElementById('minIndexValue').textContent = '-';
             document.getElementById('statusMessage').innerHTML = '';
+            document.getElementById('processLog').innerHTML = '';
             renderBars();
+            addProcessLog('已初始化陣列，等待開始排序', 'pass');
+        }
+
+        function addProcessLog(message, type = 'pass') {
+            const log = document.getElementById('processLog');
+            const item = document.createElement('div');
+            processStep++;
+            item.className = 'process-item ' + type;
+            item.textContent = '步驟 ' + processStep + '：' + message;
+            log.appendChild(item);
+
+            if (log.children.length > 180) {
+                log.removeChild(log.firstElementChild);
+            }
+
+            log.scrollTop = log.scrollHeight;
         }
 
         function loadArray() {
@@ -741,11 +814,13 @@ function selectionSort(arr) {
             isSorting = true;
             isPaused = false;
             const n = array.length;
+            addProcessLog('開始 Selection Sort 排序，共 ' + array.length + ' 個元素', 'pass');
 
             for (let i = 0; i < n - 1; i++) {
                 if (!isSorting) break;
 
                 currentMinIndex = i;
+                addProcessLog('第 ' + (i + 1) + ' 輪開始，先假設索引 ' + i + ' 為最小值', 'pass');
                 document.getElementById('minIndexValue').textContent = String(currentMinIndex);
                 renderBars([i]);
                 showStatus('第 ' + (i + 1) + ' 輪：尋找最小值', 'info');
@@ -760,12 +835,14 @@ function selectionSort(arr) {
 
                     compareCount++;
                     document.getElementById('compareCount').textContent = String(compareCount);
+                    addProcessLog('比較索引 ' + j + '（' + array[j] + '）與目前最小值索引 ' + currentMinIndex + '（' + array[currentMinIndex] + '）', 'compare');
                     renderBars([j, currentMinIndex]);
                     await delay(getDelay());
 
                     if (array[j] < array[currentMinIndex]) {
                         currentMinIndex = j;
                         document.getElementById('minIndexValue').textContent = String(currentMinIndex);
+                        addProcessLog('更新最小值位置為索引 ' + currentMinIndex, 'pass');
                         renderBars([j]);
                         await delay(getDelay());
                     }
@@ -782,10 +859,12 @@ function selectionSort(arr) {
                     [array[i], array[currentMinIndex]] = [array[currentMinIndex], array[i]];
                     swapCount++;
                     document.getElementById('swapCount').textContent = String(swapCount);
+                    addProcessLog('交換索引 ' + i + ' 與索引 ' + currentMinIndex, 'swap');
                 }
 
                 sortedIndices.push(i);
                 document.getElementById('sortedCount').textContent = String(sortedIndices.length);
+                addProcessLog('第 ' + (i + 1) + ' 輪結束，索引 ' + i + ' 已固定', 'pass');
                 renderBars();
             }
 
@@ -795,6 +874,7 @@ function selectionSort(arr) {
                 document.getElementById('minIndexValue').textContent = '-';
                 renderBars();
                 showStatus('✅ 排序完成！比較 ' + compareCount + ' 次，交換 ' + swapCount + ' 次', 'success');
+                addProcessLog('排序完成，總比較 ' + compareCount + ' 次、總交換 ' + swapCount + ' 次', 'done');
             }
 
             isSorting = false;
@@ -816,6 +896,7 @@ function selectionSort(arr) {
             array = [...originalArray];
             init();
             showStatus('已重置為原始陣列', 'info');
+            addProcessLog('已重置為初始陣列', 'pass');
         }
 
         function delay(ms) {

@@ -311,6 +311,55 @@
             border: 1px solid #ffecb5;
         }
 
+        .process-section {
+            background: #ffffff;
+            border: 1px solid rgba(4, 60, 82, 0.12);
+            border-left: 6px solid #00a6a1;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        .process-section h3 {
+            margin: 0 0 12px;
+            color: #123452;
+            font-size: 1.1em;
+        }
+
+        .process-log {
+            max-height: 210px;
+            overflow-y: auto;
+            display: grid;
+            gap: 8px;
+            padding-right: 4px;
+        }
+
+        .process-item {
+            background: #f3fafc;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.92em;
+            line-height: 1.45;
+            color: #2b4762;
+            border-left: 4px solid #9bc4dd;
+        }
+
+        .process-item.compare {
+            border-left-color: #ef7d55;
+        }
+
+        .process-item.swap {
+            border-left-color: #2a79d3;
+        }
+
+        .process-item.pass {
+            border-left-color: #0f8f8b;
+        }
+
+        .process-item.done {
+            border-left-color: #2e9d52;
+        }
+
         .teaching-section {
             background: white;
             padding: 30px;
@@ -536,6 +585,11 @@
 
         <div id="statusMessage"></div>
 
+        <div class="process-section">
+            <h3>排序過程</h3>
+            <div class="process-log" id="processLog"></div>
+        </div>
+
         <div class="info-panel">
             <div class="info-box">
                 <div class="info-label">比較次數</div>
@@ -631,6 +685,7 @@ function insertionSort(arr) {
         let sortedCount = Math.min(1, array.length);
         let currentKeyIndex = -1;
         let insertPosition = -1;
+        let processStep = 0;
 
         document.getElementById('speedSlider').addEventListener('input', function() {
             const labels = ['超快', '極快', '很快', '快速', '較快', '中速', '較慢', '慢速', '很慢', '極慢'];
@@ -643,12 +698,30 @@ function insertionSort(arr) {
             sortedCount = Math.min(1, array.length);
             currentKeyIndex = -1;
             insertPosition = -1;
+            processStep = 0;
             document.getElementById('compareCount').textContent = '0';
             document.getElementById('shiftCount').textContent = '0';
             document.getElementById('sortedCount').textContent = String(sortedCount);
             document.getElementById('insertPosValue').textContent = '-';
             document.getElementById('statusMessage').innerHTML = '';
+            document.getElementById('processLog').innerHTML = '';
             renderBars();
+            addProcessLog('已初始化陣列，等待開始排序', 'pass');
+        }
+
+        function addProcessLog(message, type = 'pass') {
+            const log = document.getElementById('processLog');
+            const item = document.createElement('div');
+            processStep++;
+            item.className = 'process-item ' + type;
+            item.textContent = '步驟 ' + processStep + '：' + message;
+            log.appendChild(item);
+
+            if (log.children.length > 180) {
+                log.removeChild(log.firstElementChild);
+            }
+
+            log.scrollTop = log.scrollHeight;
         }
 
         function loadArray() {
@@ -738,12 +811,14 @@ function insertionSort(arr) {
             isSorting = true;
             isPaused = false;
             const n = array.length;
+            addProcessLog('開始 Insertion Sort 排序，共 ' + array.length + ' 個元素', 'pass');
 
             for (let i = 1; i < n; i++) {
                 if (!isSorting) break;
 
                 const key = array[i];
                 let j = i - 1;
+                addProcessLog('第 ' + i + ' 輪：拿出索引 ' + i + ' 的值 ' + key + ' 作為 key', 'pass');
                 currentKeyIndex = i;
                 insertPosition = i;
                 sortedCount = i;
@@ -762,6 +837,7 @@ function insertionSort(arr) {
 
                     compareCount++;
                     document.getElementById('compareCount').textContent = String(compareCount);
+                    addProcessLog('比較索引 ' + j + '（' + array[j] + '）與 key（' + key + '）', 'compare');
                     renderBars([j, j + 1]);
                     await delay(getDelay());
 
@@ -769,6 +845,7 @@ function insertionSort(arr) {
                         array[j + 1] = array[j];
                         shiftCount++;
                         document.getElementById('shiftCount').textContent = String(shiftCount);
+                        addProcessLog('索引 ' + j + ' 的值向右位移到索引 ' + (j + 1), 'swap');
                         currentKeyIndex = j;
                         insertPosition = j;
                         document.getElementById('insertPosValue').textContent = String(insertPosition);
@@ -791,6 +868,7 @@ function insertionSort(arr) {
                 array[j + 1] = key;
                 currentKeyIndex = j + 1;
                 insertPosition = j + 1;
+                addProcessLog('將 key（' + key + '）插入索引 ' + (j + 1), 'pass');
                 sortedCount = i + 1;
                 document.getElementById('sortedCount').textContent = String(sortedCount);
                 document.getElementById('insertPosValue').textContent = String(insertPosition);
@@ -806,6 +884,7 @@ function insertionSort(arr) {
                 document.getElementById('insertPosValue').textContent = '-';
                 renderBars();
                 showStatus('✅ 排序完成！比較 ' + compareCount + ' 次，位移 ' + shiftCount + ' 次', 'success');
+                addProcessLog('排序完成，總比較 ' + compareCount + ' 次、總位移 ' + shiftCount + ' 次', 'done');
             }
 
             isSorting = false;
@@ -827,6 +906,7 @@ function insertionSort(arr) {
             array = [...originalArray];
             init();
             showStatus('已重置為原始陣列', 'info');
+            addProcessLog('已重置為初始陣列', 'pass');
         }
 
         function delay(ms) {
