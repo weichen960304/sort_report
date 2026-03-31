@@ -5,16 +5,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>排序練習首頁</title>
 	<style>
-		@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap");
+		@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap");
 
 		:root {
-			--bg-start: #fff8ef;
-			--bg-mid: #e8fbf8;
-			--bg-end: #dcefff;
-			--text: #1b2a3f;
-			--accent: #007a78;
-			--accent-hover: #005f5d;
-			--card: rgba(255, 255, 255, 0.82);
+			--bg-1: #0b1026;
+			--bg-2: #1d2d72;
+			--bg-3: #2c7fb8;
+			--panel: rgba(255, 255, 255, 0.12);
+			--panel-border: rgba(255, 255, 255, 0.28);
+			--text-main: #f4f8ff;
+			--text-muted: #d9e4ff;
+			--chip: rgba(255, 255, 255, 0.16);
+			--card-1: #63b3ff;
+			--card-2: #8f7dff;
+			--card-3: #4cd6ad;
 		}
 
 		* {
@@ -24,85 +28,206 @@
 		body {
 			margin: 0;
 			min-height: 100vh;
-			display: grid;
-			place-items: center;
+			font-family: "Noto Sans TC", sans-serif;
+			color: var(--text-main);
 			background:
-				radial-gradient(circle at 10% 15%, rgba(255, 167, 38, 0.2) 0, transparent 35%),
-				radial-gradient(circle at 85% 80%, rgba(0, 166, 153, 0.22) 0, transparent 40%),
-				linear-gradient(130deg, var(--bg-start), var(--bg-mid), var(--bg-end));
-			color: var(--text);
-			font-family: "Outfit", "Noto Sans TC", sans-serif;
-			padding: 24px;
+				radial-gradient(circle at 12% 18%, rgba(89, 181, 255, 0.35) 0, transparent 28%),
+				radial-gradient(circle at 88% 82%, rgba(163, 119, 255, 0.35) 0, transparent 32%),
+				linear-gradient(140deg, var(--bg-1), var(--bg-2) 50%, var(--bg-3));
+			padding: 20px;
+			overflow-x: hidden;
 		}
 
-		.card {
-			width: min(520px, 100%);
-			background: var(--card);
-			border: 1px solid rgba(255, 255, 255, 0.65);
-			backdrop-filter: blur(8px);
-			border-radius: 22px;
-			padding: 34px;
-			box-shadow: 0 18px 45px rgba(16, 58, 80, 0.16);
-			text-align: center;
+		body::before,
+		body::after {
+			content: "";
+			position: fixed;
+			inset: auto;
+			width: 320px;
+			height: 320px;
+			border-radius: 50%;
+			pointer-events: none;
+			filter: blur(6px);
+			z-index: 0;
+		}
+
+		body::before {
+			top: -120px;
+			right: -70px;
+			background: rgba(76, 214, 173, 0.28);
+		}
+
+		body::after {
+			bottom: -130px;
+			left: -80px;
+			background: rgba(99, 179, 255, 0.28);
+		}
+
+		.wrapper {
+			position: relative;
+			z-index: 1;
+			width: min(980px, 100%);
+			margin: 0 auto;
+			padding: 28px;
+			border-radius: 28px;
+			border: 1px solid var(--panel-border);
+			background: var(--panel);
+			backdrop-filter: blur(10px);
+			box-shadow: 0 30px 80px rgba(6, 10, 28, 0.38);
+			animation: fade-up 0.8s ease both;
+		}
+
+		.hero {
+			display: grid;
+			gap: 14px;
+			margin-bottom: 24px;
+		}
+
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			width: fit-content;
+			padding: 6px 14px;
+			border-radius: 999px;
+			background: var(--chip);
+			border: 1px solid rgba(255, 255, 255, 0.25);
+			font-size: 0.85rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
 		}
 
 		h1 {
-			margin: 0 0 12px;
-			font-size: clamp(1.8rem, 4vw, 2.35rem);
+			margin: 0;
+			font-family: "Chakra Petch", "Noto Sans TC", sans-serif;
+			font-size: clamp(2rem, 4.7vw, 3.3rem);
+			line-height: 1.08;
 			letter-spacing: 0.01em;
 		}
 
-		p {
-			margin: 0 0 20px;
-			line-height: 1.6;
-			color: #324b67;
+		.subtitle {
+			margin: 0;
+			max-width: 700px;
+			color: var(--text-muted);
+			line-height: 1.7;
 		}
 
-		.links {
-			display: flex;
-			justify-content: center;
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 14px;
+		}
+
+		.sort-card {
+			display: grid;
 			gap: 12px;
-			flex-wrap: wrap;
-		}
-
-		.link-btn {
-			display: inline-block;
 			text-decoration: none;
-			color: #fff;
-			background: linear-gradient(135deg, #008f8d 0%, #006e6c 100%);
-			padding: 12px 20px;
-			border-radius: 12px;
+			color: #0f1630;
+			border-radius: 18px;
+			padding: 18px;
+			background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(247, 250, 255, 0.84));
+			border: 1px solid rgba(255, 255, 255, 0.7);
+			box-shadow: 0 12px 28px rgba(8, 20, 60, 0.22);
+			transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+		}
+
+		.sort-card:hover {
+			transform: translateY(-6px);
+			box-shadow: 0 18px 34px rgba(8, 20, 60, 0.34);
+			border-color: rgba(255, 255, 255, 0.95);
+		}
+
+		.sort-card h2 {
+			margin: 0;
+			font-family: "Chakra Petch", "Noto Sans TC", sans-serif;
+			font-size: 1.3rem;
+		}
+
+		.sort-card p {
+			margin: 0;
+			line-height: 1.6;
+			font-size: 0.95rem;
+			color: #2f3e63;
+		}
+
+		.tag {
+			display: inline-flex;
+			padding: 4px 10px;
+			width: fit-content;
+			border-radius: 999px;
+			font-size: 0.78rem;
 			font-weight: 700;
-			box-shadow: 0 9px 18px rgba(0, 122, 120, 0.26);
-			transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+			color: #10203c;
+			background: rgba(255, 255, 255, 0.85);
 		}
 
-		.link-btn:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 13px 25px rgba(0, 122, 120, 0.3);
-			filter: brightness(1.04);
+		.sort-card:nth-child(1) .tag {
+			background: rgba(99, 179, 255, 0.4);
 		}
 
-		@media (max-width: 640px) {
-			.card {
-				padding: 26px 20px;
+		.sort-card:nth-child(2) .tag {
+			background: rgba(143, 125, 255, 0.38);
+		}
+
+		.sort-card:nth-child(3) .tag {
+			background: rgba(76, 214, 173, 0.4);
+		}
+
+		.footer-note {
+			margin-top: 16px;
+			font-size: 0.88rem;
+			color: rgba(235, 244, 255, 0.88);
+		}
+
+		@keyframes fade-up {
+			from {
+				opacity: 0;
+				transform: translateY(12px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@media (max-width: 860px) {
+			.wrapper {
+				padding: 20px;
 			}
 
-			.link-btn {
-				width: 100%;
+			.grid {
+				grid-template-columns: 1fr;
 			}
 		}
 	</style>
 </head>
 <body>
-	<main class="card">
-		<h1>程式練習入口</h1>
-		<p>點擊下方按鈕，前往不同排序法介紹與示範頁面。</p>
-		<div class="links">
-			<a class="link-btn" href="bubble_sort.html">前往 Bubble Sort</a>
-			<a class="link-btn" href="selection_sort.html">前往 Selection Sort</a>
-			<a class="link-btn" href="insertion_sort.html">前往 Insertion Sort</a>
-		</div>
+	<main class="wrapper">
+		<section class="hero">
+			<span class="badge">SORTING LAB</span>
+			<h1>排序練習入口</h1>
+			<p class="subtitle">挑一種排序法開始探索，透過互動動畫觀察每一步交換與比較，快速建立演算法的直覺。</p>
+		</section>
+
+		<section class="grid" aria-label="排序法入口">
+			<a class="sort-card" href="bubble_sort.html">
+				<span class="tag">交換為核心</span>
+				<h2>Bubble Sort</h2>
+				<p>反覆比較相鄰元素，像氣泡一樣把最大值推到尾端，流程直觀且好理解。</p>
+			</a>
+			<a class="sort-card" href="selection_sort.html">
+				<span class="tag">每輪選最小</span>
+				<h2>Selection Sort</h2>
+				<p>每一輪從未排序區找最小值放到前面，步驟固定，方便觀察比較次數。</p>
+			</a>
+			<a class="sort-card" href="insertion_sort.html">
+				<span class="tag">局部有序插入</span>
+				<h2>Insertion Sort</h2>
+				<p>逐步把元素插入已排序區，對近乎排序好的資料特別有效率。</p>
+			</a>
+		</section>
+
+		<p class="footer-note">建議先從 Bubble Sort 開始，再比較三種排序法在不同資料型態下的差異。</p>
 	</main>
 </body>
 </html>
