@@ -2,8 +2,26 @@
 
 學號: 11428244  
 姓名: 林韋辰  
-模擬頁面: [https://github.com/weichen960304
-sort_report.git](https://github.com/weichen960304/sort_report.git)
+模擬頁面: [https://github.com/weichen960304/sort_report.git](https://github.com/weichen960304/sort_report.git)
+
+## 大綱（對應 HTML 頁面）
+
+1. 首頁導覽：[index.html](index.html)
+2. 氣泡排序互動模擬器：[bubble_sort.html](bubble_sort.html)
+3. 選擇排序互動模擬器：[selection_sort.html](selection_sort.html)
+4. 插入排序互動模擬器：[insertion_sort.html](insertion_sort.html)
+5. 合併排序互動模擬器：[merge_sort.html](merge_sort.html)
+6. 快速排序互動模擬器：[quick_sort.html](quick_sort.html)
+
+## 頁面共通功能（符合各排序 HTML）
+
+* 可輸入一組整數資料進行排序
+* 可隨機產生測試資料
+* 提供開始、暫停、重設等控制按鈕
+* 提供速度調整（快慢）
+* 顯示比較次數、交換次數與目前狀態
+* 使用長條圖視覺化每一步排序過程
+
 ### 氣泡排序法 (Bubble Sort)
 
 *   **簡述原理：**
