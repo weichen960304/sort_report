@@ -282,6 +282,38 @@
             margin: 0;
         }
 
+        .trace-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: #9ec9ff;
+        }
+
+        .trace-toolbar strong {
+            color: #ffffff;
+        }
+
+        .code-line {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 10px;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .code-line.active {
+            background: rgba(78, 201, 176, 0.18);
+        }
+
+        .code-line .line-no {
+            color: #6f93b7;
+            text-align: right;
+            user-select: none;
+        }
+
         .status-message {
             padding: 15px;
             border-radius: 5px;
@@ -567,6 +599,10 @@
             border-radius: 14px;
         }
 
+        .trace-toolbar {
+            color: #a8cde9;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -740,26 +776,10 @@
         <!-- 程式碼區域 -->
         <div class="code-section">
             <h3>📝 JavaScript 實現</h3>
-            <pre>
-function bubbleSort(arr) {
-    let n = arr.length;
-    let comparisons = 0;
-    let swaps = 0;
-    
-    for (let i = 0; i < n - 1; i++) {
-        for (let j = 0; j < n - i - 1; j++) {
-            comparisons++;
-            
-            if (arr[j] > arr[j + 1]) {
-                // 交換元素
-                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-                swaps++;
-            }
-        }
-    }
-    
-    return { array: arr, comparisons, swaps };
-}</pre>
+            <div class="trace-toolbar">
+                <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+            </div>
+            <pre id="codeBlock"></pre>
         </div>
 
         <!-- 教學內容 -->
@@ -842,6 +862,23 @@ console.log("排序後的陣列: ", sortedArray);</pre>
         let swapCount = 0;
         let sortedIndices = [];
         let processStep = 0;
+        const codeLines = [
+            'function bubbleSort(arr) {',
+            '    let n = arr.length;',
+            '    let comparisons = 0;',
+            '    let swaps = 0;',
+            '    for (let i = 0; i < n - 1; i++) {',
+            '        for (let j = 0; j < n - i - 1; j++) {',
+            '            comparisons++;',
+            '            if (arr[j] > arr[j + 1]) {',
+            '                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];',
+            '                swaps++;',
+            '            }',
+            '        }',
+            '    }',
+            '    return { array: arr, comparisons, swaps };',
+            '}'
+        ];
 
         // 更新速度標籤
         document.getElementById('speedSlider').addEventListener('input', function() {
@@ -850,8 +887,31 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('speedLabel').textContent = labels[this.value - 1];
         });
 
+        function setupCodeTrace() {
+            const block = document.getElementById('codeBlock');
+            block.innerHTML = codeLines.map((line, idx) => (
+                '<div class="code-line" data-line="' + (idx + 1) + '">' +
+                '<span class="line-no">' + (idx + 1) + '</span>' +
+                '<span>' + line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+                '</div>'
+            )).join('');
+        }
+
+        function setActiveCodeLine(line, text) {
+            document.querySelectorAll('#codeBlock .code-line').forEach(el => el.classList.remove('active'));
+            if (line) {
+                const target = document.querySelector('#codeBlock .code-line[data-line="' + line + '"]');
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollIntoView({ block: 'nearest' });
+                }
+            }
+            document.getElementById('currentCodeLine').textContent = text || '尚未開始';
+        }
+
         // 初始化
         function init() {
+            setupCodeTrace();
             compareCount = 0;
             swapCount = 0;
             sortedIndices = [];
@@ -862,6 +922,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('statusMessage').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
             renderBars();
+            setActiveCodeLine(null, '等待中');
             addProcessLog('已初始化陣列，等待開始排序', 'pass');
         }
 
@@ -956,6 +1017,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             isSorting = true;
             isPaused = false;
             document.getElementById('statusLabel').textContent = '排序中...';
+            setActiveCodeLine(5, '第 5 行：進入外層迴圈');
             addProcessLog('開始 Bubble Sort 排序，共 ' + array.length + ' 個元素', 'pass');
             
             const n = array.length;
@@ -965,6 +1027,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
                 addProcessLog('第 ' + (i + 1) + ' 輪開始，未排序範圍為 0 到 ' + (n - i - 1), 'pass');
                 
                 for (let j = 0; j < n - i - 1; j++) {
+                    setActiveCodeLine(6, '第 6 行：進入內層迴圈');
                     while (isPaused && isSorting) {
                         await delay(100);
                     }
@@ -972,6 +1035,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
                     if (isSorting === false) break;
                     
                     compareCount++;
+                    setActiveCodeLine(7, '第 7 行：比較次數 +1');
                     document.getElementById('compareCount').textContent = compareCount;
                     addProcessLog('比較索引 ' + j + ' 與 ' + (j + 1) + '（' + array[j] + ' 與 ' + array[j + 1] + '）', 'compare');
                     
@@ -980,10 +1044,12 @@ console.log("排序後的陣列: ", sortedArray);</pre>
                     await delay(getDelay());
                     
                     if (array[j] > array[j + 1]) {
+                        setActiveCodeLine(9, '第 9 行：交換相鄰元素');
                         // 交換
                         highlightBars([j, j + 1], 'swapping');
                         [array[j], array[j + 1]] = [array[j + 1], array[j]];
                         swapCount++;
+                        setActiveCodeLine(10, '第 10 行：交換次數 +1');
                         document.getElementById('swapCount').textContent = swapCount;
                         addProcessLog('發生交換，索引 ' + j + ' 與 ' + (j + 1) + ' 對調', 'swap');
                         renderBars();
@@ -1000,6 +1066,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             }
 
             sortedIndices = Array.from({length: n}, (_, i) => i);
+            setActiveCodeLine(14, '第 14 行：回傳排序結果');
             renderBars();
             isSorting = false;
             document.getElementById('statusLabel').textContent = '完成！';
@@ -1036,6 +1103,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             isPaused = false;
             array = [...originalArray];
             init();
+            setActiveCodeLine(null, '已重置');
             document.getElementById('statusLabel').textContent = '等待中';
             showStatus('已重置為原始陣列', 'info');
             addProcessLog('已重置為初始陣列', 'pass');

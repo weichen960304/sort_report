@@ -282,6 +282,38 @@
             margin: 0;
         }
 
+        .trace-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: #9ec9ff;
+        }
+
+        .trace-toolbar strong {
+            color: #ffffff;
+        }
+
+        .code-line {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 10px;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .code-line.active {
+            background: rgba(78, 201, 176, 0.18);
+        }
+
+        .code-line .line-no {
+            color: #6f93b7;
+            text-align: right;
+            user-select: none;
+        }
+
         .status-message {
             padding: 15px;
             border-radius: 5px;
@@ -567,6 +599,10 @@
             border-radius: 14px;
         }
 
+        .trace-toolbar {
+            color: #a8cde9;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -740,36 +776,10 @@
         <!-- 程式碼區域 -->
         <div class="code-section">
             <h3>📝 JavaScript 實現</h3>
-            <pre>
-function mergeSort(arr) {
-    if (arr.length <= 1) {
-        return arr;
-    }
-    
-    const mid = Math.floor(arr.length / 2);
-    const left = arr.slice(0, mid);
-    const right = arr.slice(mid);
-    
-    return merge(mergeSort(left), mergeSort(right));
-}
-
-function merge(left, right) {
-    let result = [];
-    let leftIndex = 0;
-    let rightIndex = 0;
-    
-    while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex] < right[rightIndex]) {
-            result.push(left[leftIndex]);
-            leftIndex++;
-        } else {
-            result.push(right[rightIndex]);
-            rightIndex++;
-        }
-    }
-    
-    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-}</pre>
+            <div class="trace-toolbar">
+                <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+            </div>
+            <pre id="codeBlock"></pre>
         </div>
 
         <!-- 教學內容 -->
@@ -867,6 +877,30 @@ console.log("排序後的陣列: ", sortedArray);</pre>
         let mergeCount = 0;
         let sortedIndices = [];
         let processStep = 0;
+        const codeLines = [
+            'function mergeSort(arr) {',
+            '    if (arr.length <= 1) return arr;',
+            '    const mid = Math.floor(arr.length / 2);',
+            '    const left = arr.slice(0, mid);',
+            '    const right = arr.slice(mid);',
+            '    return merge(mergeSort(left), mergeSort(right));',
+            '}',
+            'function merge(left, right) {',
+            '    let result = [];',
+            '    let leftIndex = 0;',
+            '    let rightIndex = 0;',
+            '    while (leftIndex < left.length && rightIndex < right.length) {',
+            '        if (left[leftIndex] < right[rightIndex]) {',
+            '            result.push(left[leftIndex]);',
+            '            leftIndex++;',
+            '        } else {',
+            '            result.push(right[rightIndex]);',
+            '            rightIndex++;',
+            '        }',
+            '    }',
+            '    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));',
+            '}'
+        ];
 
         // 更新速度標籤
         document.getElementById('speedSlider').addEventListener('input', function() {
@@ -875,8 +909,31 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('speedLabel').textContent = labels[this.value - 1];
         });
 
+        function setupCodeTrace() {
+            const block = document.getElementById('codeBlock');
+            block.innerHTML = codeLines.map((line, idx) => (
+                '<div class="code-line" data-line="' + (idx + 1) + '">' +
+                '<span class="line-no">' + (idx + 1) + '</span>' +
+                '<span>' + line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+                '</div>'
+            )).join('');
+        }
+
+        function setActiveCodeLine(line, text) {
+            document.querySelectorAll('#codeBlock .code-line').forEach(el => el.classList.remove('active'));
+            if (line) {
+                const target = document.querySelector('#codeBlock .code-line[data-line="' + line + '"]');
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollIntoView({ block: 'nearest' });
+                }
+            }
+            document.getElementById('currentCodeLine').textContent = text || '尚未開始';
+        }
+
         // 初始化
         function init() {
+            setupCodeTrace();
             compareCount = 0;
             mergeCount = 0;
             sortedIndices = [];
@@ -887,6 +944,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('statusMessage').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
             renderBars();
+            setActiveCodeLine(null, '等待中');
             addProcessLog('已初始化陣列，等待開始排序', 'pass');
         }
 
@@ -981,11 +1039,13 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             isSorting = true;
             isPaused = false;
             document.getElementById('statusLabel').textContent = '排序中...';
+            setActiveCodeLine(1, '第 1 行：呼叫 mergeSort');
             addProcessLog('開始 Merge Sort 排序，共 ' + array.length + ' 個元素', 'pass');
             
             await mergeSortVisual(0, array.length - 1);
             
             sortedIndices = Array.from({length: array.length}, (_, i) => i);
+            setActiveCodeLine(21, '第 21 行：回傳合併結果');
             renderBars();
             isSorting = false;
             document.getElementById('statusLabel').textContent = '完成！';
@@ -997,6 +1057,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
         async function mergeSortVisual(left, right) {
             if (left >= right) return;
             
+            setActiveCodeLine(3, '第 3 行：計算中點');
             const mid = Math.floor((left + right) / 2);
             
             addProcessLog('分割陣列：索引 ' + left + ' 到 ' + right + '，中間點為 ' + mid, 'pass');
@@ -1007,6 +1068,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             await mergeSortVisual(mid + 1, right);
             
             // 合併
+            setActiveCodeLine(6, '第 6 行：遞迴合併');
             await mergeVisual(left, mid, right);
         }
 
@@ -1022,6 +1084,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('mergeCount').textContent = mergeCount;
             addProcessLog('開始合併：左半 ' + left + '-' + mid + ' 與右半 ' + (mid + 1) + '-' + right, 'pass');
             
+            setActiveCodeLine(9, '第 9 行：初始化 result');
             const n1 = mid - left + 1;
             const n2 = right - mid;
             
@@ -1031,6 +1094,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             let i = 0, j = 0, k = left;
             
             while (i < n1 && j < n2) {
+                setActiveCodeLine(12, '第 12 行：比較左右子陣列');
                 while (isPaused && isSorting) {
                     await delay(100);
                 }
@@ -1046,9 +1110,11 @@ console.log("排序後的陣列: ", sortedArray);</pre>
                 await delay(getDelay());
                 
                 if (L[i] <= R[j]) {
+                    setActiveCodeLine(14, '第 14 行：放入左側元素');
                     array[k] = L[i];
                     i++;
                 } else {
+                    setActiveCodeLine(17, '第 17 行：放入右側元素');
                     array[k] = R[j];
                     j++;
                 }
@@ -1116,6 +1182,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             isPaused = false;
             array = [...originalArray];
             init();
+            setActiveCodeLine(null, '已重置');
             document.getElementById('statusLabel').textContent = '等待中';
             showStatus('已重置為原始陣列', 'info');
             addProcessLog('已重置為初始陣列', 'pass');

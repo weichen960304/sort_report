@@ -285,6 +285,38 @@
             margin: 0;
         }
 
+        .trace-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: #9ec9ff;
+        }
+
+        .trace-toolbar strong {
+            color: #ffffff;
+        }
+
+        .code-line {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 10px;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .code-line.active {
+            background: rgba(78, 201, 176, 0.18);
+        }
+
+        .code-line .line-no {
+            color: #6f93b7;
+            text-align: right;
+            user-select: none;
+        }
+
         .status-message {
             padding: 15px;
             border-radius: 5px;
@@ -548,6 +580,10 @@
             border-radius: 14px;
         }
 
+        .trace-toolbar {
+            color: #a8cde9;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -716,31 +752,10 @@
 
         <div class="code-section">
             <h3>📝 JavaScript 實現</h3>
-            <pre>
-function insertionSort(arr) {
-    let comparisons = 0;
-    let shifts = 0;
-
-    for (let i = 1; i < arr.length; i++) {
-        const key = arr[i];
-        let j = i - 1;
-
-        while (j >= 0) {
-            comparisons++;
-            if (arr[j] > key) {
-                arr[j + 1] = arr[j];
-                shifts++;
-                j--;
-            } else {
-                break;
-            }
-        }
-
-        arr[j + 1] = key;
-    }
-
-    return { array: arr, comparisons, shifts };
-}</pre>
+            <div class="trace-toolbar">
+                <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+            </div>
+            <pre id="codeBlock"></pre>
         </div>
 
         <div class="teaching-section">
@@ -787,13 +802,58 @@ function insertionSort(arr) {
         let currentKeyIndex = -1;
         let insertPosition = -1;
         let processStep = 0;
+        const codeLines = [
+            'function insertionSort(arr) {',
+            '    let comparisons = 0;',
+            '    let shifts = 0;',
+            '    for (let i = 1; i < arr.length; i++) {',
+            '        const key = arr[i];',
+            '        let j = i - 1;',
+            '        while (j >= 0) {',
+            '            comparisons++;',
+            '            if (arr[j] > key) {',
+            '                arr[j + 1] = arr[j];',
+            '                shifts++;',
+            '                j--;',
+            '            } else {',
+            '                break;',
+            '            }',
+            '        }',
+            '        arr[j + 1] = key;',
+            '    }',
+            '    return { array: arr, comparisons, shifts };',
+            '}'
+        ];
 
         document.getElementById('speedSlider').addEventListener('input', function() {
             const labels = ['超快', '極快', '很快', '快速', '較快', '中速', '較慢', '慢速', '很慢', '極慢'];
             document.getElementById('speedLabel').textContent = labels[this.value - 1];
         });
 
+        function setupCodeTrace() {
+            const block = document.getElementById('codeBlock');
+            block.innerHTML = codeLines.map((line, idx) => (
+                '<div class="code-line" data-line="' + (idx + 1) + '">' +
+                '<span class="line-no">' + (idx + 1) + '</span>' +
+                '<span>' + line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+                '</div>'
+            )).join('');
+        }
+
+        function setActiveCodeLine(line, text) {
+            document.querySelectorAll('#codeBlock .code-line').forEach(el => el.classList.remove('active'));
+            if (line) {
+                const target = document.querySelector('#codeBlock .code-line[data-line="' + line + '"]');
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollIntoView({ block: 'nearest' });
+                }
+            }
+            document.getElementById('currentCodeLine').textContent = text || '尚未開始';
+        }
+
         function init() {
+            setupCodeTrace();
             compareCount = 0;
             shiftCount = 0;
             sortedCount = Math.min(1, array.length);
@@ -807,6 +867,7 @@ function insertionSort(arr) {
             document.getElementById('statusMessage').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
             renderBars();
+            setActiveCodeLine(null, '等待中');
             addProcessLog('已初始化陣列，等待開始排序', 'pass');
         }
 
@@ -912,12 +973,14 @@ function insertionSort(arr) {
             isSorting = true;
             isPaused = false;
             const n = array.length;
+            setActiveCodeLine(4, '第 4 行：進入外層迴圈');
             addProcessLog('開始 Insertion Sort 排序，共 ' + array.length + ' 個元素', 'pass');
 
             for (let i = 1; i < n; i++) {
                 if (!isSorting) break;
 
                 const key = array[i];
+                setActiveCodeLine(5, '第 5 行：取出 key');
                 let j = i - 1;
                 addProcessLog('第 ' + i + ' 輪：拿出索引 ' + i + ' 的值 ' + key + ' 作為 key', 'pass');
                 currentKeyIndex = i;
@@ -930,6 +993,7 @@ function insertionSort(arr) {
                 await delay(getDelay());
 
                 while (j >= 0) {
+                    setActiveCodeLine(7, '第 7 行：向左比較');
                     while (isPaused && isSorting) {
                         await delay(100);
                     }
@@ -937,14 +1001,17 @@ function insertionSort(arr) {
                     if (!isSorting) break;
 
                     compareCount++;
+                    setActiveCodeLine(8, '第 8 行：比較次數 +1');
                     document.getElementById('compareCount').textContent = String(compareCount);
                     addProcessLog('比較索引 ' + j + '（' + array[j] + '）與 key（' + key + '）', 'compare');
                     renderBars([j, j + 1]);
                     await delay(getDelay());
 
                     if (array[j] > key) {
+                        setActiveCodeLine(10, '第 10 行：元素右移');
                         array[j + 1] = array[j];
                         shiftCount++;
+                        setActiveCodeLine(11, '第 11 行：位移次數 +1');
                         document.getElementById('shiftCount').textContent = String(shiftCount);
                         addProcessLog('索引 ' + j + ' 的值向右位移到索引 ' + (j + 1), 'swap');
                         currentKeyIndex = j;
@@ -967,6 +1034,7 @@ function insertionSort(arr) {
                 if (!isSorting) break;
 
                 array[j + 1] = key;
+                setActiveCodeLine(17, '第 17 行：插入 key');
                 currentKeyIndex = j + 1;
                 insertPosition = j + 1;
                 addProcessLog('將 key（' + key + '）插入索引 ' + (j + 1), 'pass');
@@ -978,6 +1046,7 @@ function insertionSort(arr) {
             }
 
             if (isSorting) {
+                setActiveCodeLine(19, '第 19 行：回傳排序結果');
                 sortedCount = array.length;
                 currentKeyIndex = -1;
                 insertPosition = -1;
@@ -1006,6 +1075,7 @@ function insertionSort(arr) {
             isPaused = false;
             array = [...originalArray];
             init();
+            setActiveCodeLine(null, '已重置');
             showStatus('已重置為原始陣列', 'info');
             addProcessLog('已重置為初始陣列', 'pass');
         }

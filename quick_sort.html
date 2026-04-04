@@ -287,6 +287,38 @@
             margin: 0;
         }
 
+        .trace-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: #9ec9ff;
+        }
+
+        .trace-toolbar strong {
+            color: #ffffff;
+        }
+
+        .code-line {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 10px;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .code-line.active {
+            background: rgba(78, 201, 176, 0.18);
+        }
+
+        .code-line .line-no {
+            color: #6f93b7;
+            text-align: right;
+            user-select: none;
+        }
+
         .status-message {
             padding: 15px;
             border-radius: 5px;
@@ -580,6 +612,10 @@
             border-radius: 14px;
         }
 
+        .trace-toolbar {
+            color: #a8cde9;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -753,31 +789,10 @@
         <!-- 程式碼區域 -->
         <div class="code-section">
             <h3>📝 JavaScript 實現</h3>
-            <pre>
-function quickSort(arr, low = 0, high = arr.length - 1) {
-    if (low < high) {
-        let pi = partition(arr, low, high);
-        
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
-    }
-    return arr;
-}
-
-function partition(arr, low, high) {
-    let pivot = arr[high];
-    let i = low - 1;
-    
-    for (let j = low; j < high; j++) {
-        if (arr[j] < pivot) {
-            i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-    }
-    
-    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-    return i + 1;
-}</pre>
+            <div class="trace-toolbar">
+                <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+            </div>
+            <pre id="codeBlock"></pre>
         </div>
 
         <!-- 教學內容 -->
@@ -877,6 +892,28 @@ console.log("排序後的陣列: ", sortedArray);</pre>
         let swapCount = 0;
         let sortedIndices = [];
         let processStep = 0;
+        const codeLines = [
+            'function quickSort(arr, low = 0, high = arr.length - 1) {',
+            '    if (low < high) {',
+            '        let pi = partition(arr, low, high);',
+            '        quickSort(arr, low, pi - 1);',
+            '        quickSort(arr, pi + 1, high);',
+            '    }',
+            '    return arr;',
+            '}',
+            'function partition(arr, low, high) {',
+            '    let pivot = arr[high];',
+            '    let i = low - 1;',
+            '    for (let j = low; j < high; j++) {',
+            '        if (arr[j] < pivot) {',
+            '            i++;',
+            '            [arr[i], arr[j]] = [arr[j], arr[i]];',
+            '        }',
+            '    }',
+            '    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];',
+            '    return i + 1;',
+            '}'
+        ];
 
         // 更新速度標籤
         document.getElementById('speedSlider').addEventListener('input', function() {
@@ -885,8 +922,31 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('speedLabel').textContent = labels[this.value - 1];
         });
 
+        function setupCodeTrace() {
+            const block = document.getElementById('codeBlock');
+            block.innerHTML = codeLines.map((line, idx) => (
+                '<div class="code-line" data-line="' + (idx + 1) + '">' +
+                '<span class="line-no">' + (idx + 1) + '</span>' +
+                '<span>' + line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+                '</div>'
+            )).join('');
+        }
+
+        function setActiveCodeLine(line, text) {
+            document.querySelectorAll('#codeBlock .code-line').forEach(el => el.classList.remove('active'));
+            if (line) {
+                const target = document.querySelector('#codeBlock .code-line[data-line="' + line + '"]');
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollIntoView({ block: 'nearest' });
+                }
+            }
+            document.getElementById('currentCodeLine').textContent = text || '尚未開始';
+        }
+
         // 初始化
         function init() {
+            setupCodeTrace();
             compareCount = 0;
             swapCount = 0;
             sortedIndices = [];
@@ -897,6 +957,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             document.getElementById('statusMessage').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
             renderBars();
+            setActiveCodeLine(null, '等待中');
             addProcessLog('已初始化陣列，等待開始排序', 'pass');
         }
 
@@ -991,11 +1052,13 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             isSorting = true;
             isPaused = false;
             document.getElementById('statusLabel').textContent = '排序中...';
+            setActiveCodeLine(1, '第 1 行：呼叫 quickSort');
             addProcessLog('開始 Quick Sort 排序，共 ' + array.length + ' 個元素', 'pass');
             
             await quickSortVisual(0, array.length - 1);
             
             sortedIndices = Array.from({length: array.length}, (_, i) => i);
+            setActiveCodeLine(7, '第 7 行：回傳排序結果');
             renderBars();
             isSorting = false;
             document.getElementById('statusLabel').textContent = '完成！';
@@ -1006,15 +1069,19 @@ console.log("排序後的陣列: ", sortedArray);</pre>
         // 視覺化快速排序
         async function quickSortVisual(low, high) {
             if (low < high) {
+                setActiveCodeLine(2, '第 2 行：判斷分區範圍');
                 let pi = await partitionVisual(low, high);
                 
+                setActiveCodeLine(4, '第 4 行：遞迴左半部');
                 await quickSortVisual(low, pi - 1);
+                setActiveCodeLine(5, '第 5 行：遞迴右半部');
                 await quickSortVisual(pi + 1, high);
             }
         }
 
         // 視覺化分區
         async function partitionVisual(low, high) {
+            setActiveCodeLine(10, '第 10 行：選定 pivot');
             let pivot = array[high];
             let i = low - 1;
             
@@ -1025,6 +1092,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             await delay(getDelay());
             
             for (let j = low; j < high; j++) {
+                setActiveCodeLine(12, '第 12 行：掃描分區');
                 while (isPaused && isSorting) {
                     await delay(100);
                 }
@@ -1040,9 +1108,11 @@ console.log("排序後的陣列: ", sortedArray);</pre>
                 await delay(getDelay());
                 
                 if (array[j] < pivot) {
+                    setActiveCodeLine(14, '第 14 行：移動 i 邊界');
                     i++;
                     
                     if (i !== j) {
+                        setActiveCodeLine(15, '第 15 行：交換元素');
                         // 交換
                         highlightBars([i, j], 'swapping');
                         [array[i], array[j]] = [array[j], array[i]];
@@ -1058,6 +1128,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             }
             
             // 將基準值放到正確位置
+            setActiveCodeLine(18, '第 18 行：pivot 放回正確位置');
             highlightBars([i + 1, high], 'swapping');
             [array[i + 1], array[high]] = [array[high], array[i + 1]];
             swapCount++;
@@ -1070,6 +1141,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             sortedIndices.push(i + 1);
             document.getElementById('sortedCount').textContent = sortedIndices.length;
             addProcessLog('基準值已就定位於索引 ' + (i + 1), 'pass');
+            setActiveCodeLine(19, '第 19 行：回傳 pivot 位置');
             
             return i + 1;
         }
@@ -1103,6 +1175,7 @@ console.log("排序後的陣列: ", sortedArray);</pre>
             isPaused = false;
             array = [...originalArray];
             init();
+            setActiveCodeLine(null, '已重置');
             document.getElementById('statusLabel').textContent = '等待中';
             showStatus('已重置為原始陣列', 'info');
             addProcessLog('已重置為初始陣列', 'pass');

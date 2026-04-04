@@ -285,6 +285,38 @@
             margin: 0;
         }
 
+        .trace-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: #9ec9ff;
+        }
+
+        .trace-toolbar strong {
+            color: #ffffff;
+        }
+
+        .code-line {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 10px;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .code-line.active {
+            background: rgba(78, 201, 176, 0.18);
+        }
+
+        .code-line .line-no {
+            color: #6f93b7;
+            text-align: right;
+            user-select: none;
+        }
+
         .status-message {
             padding: 15px;
             border-radius: 5px;
@@ -564,6 +596,10 @@
             border-radius: 14px;
         }
 
+        .trace-toolbar {
+            color: #a8cde9;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -732,30 +768,10 @@
 
         <div class="code-section">
             <h3>📝 JavaScript 實現</h3>
-            <pre>
-function selectionSort(arr) {
-    let n = arr.length;
-    let comparisons = 0;
-    let swaps = 0;
-
-    for (let i = 0; i < n - 1; i++) {
-        let minIndex = i;
-
-        for (let j = i + 1; j < n; j++) {
-            comparisons++;
-            if (arr[j] < arr[minIndex]) {
-                minIndex = j;
-            }
-        }
-
-        if (minIndex !== i) {
-            [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
-            swaps++;
-        }
-    }
-
-    return { array: arr, comparisons, swaps };
-}</pre>
+            <div class="trace-toolbar">
+                <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+            </div>
+            <pre id="codeBlock"></pre>
         </div>
 
         <div class="teaching-section">
@@ -802,13 +818,57 @@ function selectionSort(arr) {
         let sortedIndices = [];
         let currentMinIndex = -1;
         let processStep = 0;
+        const codeLines = [
+            'function selectionSort(arr) {',
+            '    let n = arr.length;',
+            '    let comparisons = 0;',
+            '    let swaps = 0;',
+            '    for (let i = 0; i < n - 1; i++) {',
+            '        let minIndex = i;',
+            '        for (let j = i + 1; j < n; j++) {',
+            '            comparisons++;',
+            '            if (arr[j] < arr[minIndex]) {',
+            '                minIndex = j;',
+            '            }',
+            '        }',
+            '        if (minIndex !== i) {',
+            '            [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];',
+            '            swaps++;',
+            '        }',
+            '    }',
+            '    return { array: arr, comparisons, swaps };',
+            '}'
+        ];
 
         document.getElementById('speedSlider').addEventListener('input', function() {
             const labels = ['超快', '極快', '很快', '快速', '較快', '中速', '較慢', '慢速', '很慢', '極慢'];
             document.getElementById('speedLabel').textContent = labels[this.value - 1];
         });
 
+        function setupCodeTrace() {
+            const block = document.getElementById('codeBlock');
+            block.innerHTML = codeLines.map((line, idx) => (
+                '<div class="code-line" data-line="' + (idx + 1) + '">' +
+                '<span class="line-no">' + (idx + 1) + '</span>' +
+                '<span>' + line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+                '</div>'
+            )).join('');
+        }
+
+        function setActiveCodeLine(line, text) {
+            document.querySelectorAll('#codeBlock .code-line').forEach(el => el.classList.remove('active'));
+            if (line) {
+                const target = document.querySelector('#codeBlock .code-line[data-line="' + line + '"]');
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollIntoView({ block: 'nearest' });
+                }
+            }
+            document.getElementById('currentCodeLine').textContent = text || '尚未開始';
+        }
+
         function init() {
+            setupCodeTrace();
             compareCount = 0;
             swapCount = 0;
             sortedIndices = [];
@@ -821,6 +881,7 @@ function selectionSort(arr) {
             document.getElementById('statusMessage').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
             renderBars();
+            setActiveCodeLine(null, '等待中');
             addProcessLog('已初始化陣列，等待開始排序', 'pass');
         }
 
@@ -917,12 +978,14 @@ function selectionSort(arr) {
             isSorting = true;
             isPaused = false;
             const n = array.length;
+            setActiveCodeLine(5, '第 5 行：進入外層迴圈');
             addProcessLog('開始 Selection Sort 排序，共 ' + array.length + ' 個元素', 'pass');
 
             for (let i = 0; i < n - 1; i++) {
                 if (!isSorting) break;
 
                 currentMinIndex = i;
+                setActiveCodeLine(6, '第 6 行：假設最小值位置');
                 addProcessLog('第 ' + (i + 1) + ' 輪開始，先假設索引 ' + i + ' 為最小值', 'pass');
                 document.getElementById('minIndexValue').textContent = String(currentMinIndex);
                 renderBars([i]);
@@ -930,6 +993,7 @@ function selectionSort(arr) {
                 await delay(getDelay());
 
                 for (let j = i + 1; j < n; j++) {
+                    setActiveCodeLine(7, '第 7 行：掃描未排序區');
                     while (isPaused && isSorting) {
                         await delay(100);
                     }
@@ -937,12 +1001,14 @@ function selectionSort(arr) {
                     if (!isSorting) break;
 
                     compareCount++;
+                    setActiveCodeLine(8, '第 8 行：比較次數 +1');
                     document.getElementById('compareCount').textContent = String(compareCount);
                     addProcessLog('比較索引 ' + j + '（' + array[j] + '）與目前最小值索引 ' + currentMinIndex + '（' + array[currentMinIndex] + '）', 'compare');
                     renderBars([j, currentMinIndex]);
                     await delay(getDelay());
 
                     if (array[j] < array[currentMinIndex]) {
+                        setActiveCodeLine(10, '第 10 行：更新最小值位置');
                         currentMinIndex = j;
                         document.getElementById('minIndexValue').textContent = String(currentMinIndex);
                         addProcessLog('更新最小值位置為索引 ' + currentMinIndex, 'pass');
@@ -954,6 +1020,7 @@ function selectionSort(arr) {
                 if (!isSorting) break;
 
                 if (currentMinIndex !== i) {
+                    setActiveCodeLine(14, '第 14 行：交換最小值');
                     const bars = document.querySelectorAll('.bar');
                     bars[i].classList.add('swapping');
                     bars[currentMinIndex].classList.add('swapping');
@@ -961,6 +1028,7 @@ function selectionSort(arr) {
 
                     [array[i], array[currentMinIndex]] = [array[currentMinIndex], array[i]];
                     swapCount++;
+                    setActiveCodeLine(15, '第 15 行：交換次數 +1');
                     document.getElementById('swapCount').textContent = String(swapCount);
                     addProcessLog('交換索引 ' + i + ' 與索引 ' + currentMinIndex, 'swap');
                 }
@@ -972,6 +1040,7 @@ function selectionSort(arr) {
             }
 
             if (isSorting) {
+                setActiveCodeLine(18, '第 18 行：回傳排序結果');
                 sortedIndices = Array.from({ length: array.length }, (_, i) => i);
                 currentMinIndex = -1;
                 document.getElementById('minIndexValue').textContent = '-';
@@ -998,6 +1067,7 @@ function selectionSort(arr) {
             isPaused = false;
             array = [...originalArray];
             init();
+            setActiveCodeLine(null, '已重置');
             showStatus('已重置為原始陣列', 'info');
             addProcessLog('已重置為初始陣列', 'pass');
         }
