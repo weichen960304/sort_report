@@ -4,8 +4,6 @@
 姓名: 林韋辰  
 模擬頁面: [https://github.com/weichen960304
 sort_report.git](https://github.com/weichen960304/sort_report.git)
-
-報告內容應該包括以下各節，簡述原理、複雜度分析與模擬實作內容。
 ### 氣泡排序法 (Bubble Sort)
 
 *   **簡述原理：**
