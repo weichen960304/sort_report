@@ -603,6 +603,27 @@
             color: #a8cde9;
         }
 
+        .simulator-row {
+            order: 9;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 14px;
+        }
+
+        .simulator-row .visualization,
+        .simulator-row .code-section {
+            order: 0;
+            margin: 0;
+        }
+
+        .simulator-row .code-section {
+            align-self: stretch;
+        }
+
+        .simulator-row .visualization {
+            margin-bottom: 0;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -631,6 +652,7 @@
         #statusMessage,
         .process-section,
         .info-panel,
+        .simulator-row,
         .visualization,
         .code-section,
         .teaching-section {
@@ -693,6 +715,12 @@
             order: 9;
             margin-bottom: 4px;
             box-shadow: inset 0 0 0 1px rgba(13, 93, 104, 0.05);
+        }
+
+        @media (max-width: 980px) {
+            .simulator-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .process-log {
@@ -768,18 +796,20 @@
             </div>
         </div>
 
-        <!-- 視覺化區域 -->
-        <div class="visualization">
-            <div class="bars-container" id="barsContainer"></div>
-        </div>
-
-        <!-- 程式碼區域 -->
-        <div class="code-section">
-            <h3>📝 JavaScript 實現</h3>
-            <div class="trace-toolbar">
-                <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+        <div class="simulator-row">
+            <!-- 視覺化區域 -->
+            <div class="visualization">
+                <div class="bars-container" id="barsContainer"></div>
             </div>
-            <pre id="codeBlock"></pre>
+
+            <!-- 程式碼區域 -->
+            <div class="code-section">
+                <h3>📝 JavaScript 實現</h3>
+                <div class="trace-toolbar">
+                    <span>執行追蹤：<strong id="currentCodeLine">尚未開始</strong></span>
+                </div>
+                <pre id="codeBlock"></pre>
+            </div>
         </div>
 
         <!-- 教學內容 -->
