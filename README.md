@@ -2,7 +2,7 @@
 
 學號: 11428244  
 姓名: 林韋辰  
-模擬頁面: [https://github.com/weichen960304/sort_report.git](https://github.com/weichen960304/sort_report.git)
+模擬頁面: [https://weichen960304.github.io/sort_report/](https://weichen960304.github.io/sort_report/)
 
 ## 大綱（對應 HTML 頁面）
 
