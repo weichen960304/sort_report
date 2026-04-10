@@ -4,7 +4,7 @@
 姓名: 林韋辰  
 模擬頁面: [https://weichen960304.github.io/sort_report/](https://weichen960304.github.io/sort_report/)
 
-## 大綱（對應 HTML 頁面）
+## 大綱（對應 個排序法 HTML 程式碼）
 
 1. 首頁導覽：[index.html](index.html)
 2. 氣泡排序互動模擬器：[bubble_sort.html](bubble_sort.html)
@@ -13,7 +13,7 @@
 5. 合併排序互動模擬器：[merge_sort.html](merge_sort.html)
 6. 快速排序互動模擬器：[quick_sort.html](quick_sort.html)
 
-## 頁面共通功能（符合各排序 HTML）
+## 頁面功能介紹
 
 * 可輸入一組整數資料進行排序
 * 可隨機產生測試資料
